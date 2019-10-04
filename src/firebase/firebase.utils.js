@@ -13,10 +13,15 @@ const config = {
   measurementId: "G-2YRXL3TJ69"
 };
 
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if (!userAuth) return;
+  console.log(firestore.doc("users/128sdafdasf"));
+};
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
-export const firestotre = firebase.firestore();
+export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
