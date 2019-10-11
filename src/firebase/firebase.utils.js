@@ -26,13 +26,14 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   /* 
     the exist is a prop from snapShot object and it 
-    tells whether data is there or not 
+    tells whether data is there or not aka if user is in db
   */
-
   if (!snapShot.exists) {
     const { displayName, email } = userAuth;
+    // time when user was added from Date object
     const createdAt = new Date();
 
+    // adding user to the system with our props
     try {
       await userRef.set({
         displayName,
