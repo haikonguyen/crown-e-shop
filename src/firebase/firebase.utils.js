@@ -13,9 +13,39 @@ const config = {
   measurementId: "G-2YRXL3TJ69"
 };
 
+/* This function allow us to data from userAuth object into our DB */
 export const createUserProfileDocument = async (userAuth, additionalData) => {
+  // if our userAuth is null, return aka do nothing
   if (!userAuth) return;
-  console.log(firestore.doc("users/128sdafdasf"));
+
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+  const snapShot = await userRef.get();
+
+  console.log(snapShot);
+
+  /* 
+    the exist is a prop from snapShot object and it 
+    tells whether data is there or not 
+  */
+
+  if (!snapShot.exists) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      });
+    } catch (error) {
+      console.log("error creating user", error.message);
+    }
+  }
+
+  return userRef;
 };
 
 firebase.initializeApp(config);
