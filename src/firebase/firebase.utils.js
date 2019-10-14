@@ -22,7 +22,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   const snapShot = await userRef.get();
 
-  console.log(snapShot);
+  // console.log('snapShot', snapShot);
 
   /* 
     the exist is a prop from snapShot object and it 
