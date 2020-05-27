@@ -1,16 +1,16 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 
 const config = {
-  apiKey: "AIzaSyC2LAe_XnlGYIZbVc3AoDfvYP6APwFMxt0",
-  authDomain: "crwn-db-fd0b2.firebaseapp.com",
-  databaseURL: "https://crwn-db-fd0b2.firebaseio.com",
-  projectId: "crwn-db-fd0b2",
-  storageBucket: "",
-  messagingSenderId: "1099202970860",
-  appId: "1:1099202970860:web:94541dcf5bf091c32e91c9",
-  measurementId: "G-2YRXL3TJ69"
+  apiKey: 'AIzaSyC2LAe_XnlGYIZbVc3AoDfvYP6APwFMxt0',
+  authDomain: 'crwn-db-fd0b2.firebaseapp.com',
+  databaseURL: 'https://crwn-db-fd0b2.firebaseio.com',
+  projectId: 'crwn-db-fd0b2',
+  storageBucket: '',
+  messagingSenderId: '1099202970860',
+  appId: '1:1099202970860:web:94541dcf5bf091c32e91c9',
+  measurementId: 'G-2YRXL3TJ69',
 };
 
 /* This function allow us to data from userAuth object into our DB */
@@ -39,10 +39,10 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
         displayName,
         email,
         createdAt,
-        ...additionalData
+        ...additionalData,
       });
     } catch (error) {
-      console.log("error creating user", error.message);
+      console.log('error creating user', error.message);
     }
   }
 
@@ -51,11 +51,45 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
 firebase.initializeApp(config);
 
+// util to programatically add object to DB
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = firestore.collection(collectionKey);
+
+  const batch = firestore.batch();
+  objectsToAdd.forEach((obj) => {
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  });
+
+  return await batch.commit();
+};
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+  const tranformedCollection = collections.docs.map((doc) => {
+    const { title, items } = doc.data();
+
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items,
+    };
+  });
+
+  return tranformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+};
+
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
+provider.setCustomParameters({ prompt: 'select_account' });
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
 
 export default firebase;
