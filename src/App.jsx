@@ -45,7 +45,7 @@ class App extends React.Component {
     });
 
     auth.onAuthStateChanged(async (user) => {
-      createUserProfileDocument(user);
+      await createUserProfileDocument(user);
     });
   }
 
