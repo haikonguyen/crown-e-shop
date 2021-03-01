@@ -13,6 +13,9 @@ const config = {
   measurementId: 'G-2YRXL3TJ69',
 };
 
+firebase.initializeApp(config);
+export const firestore = firebase.firestore();
+
 /* This function allow us to data from userAuth object into our DB */
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   // if our userAuth is null, return aka do nothing
@@ -24,8 +27,8 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   // console.log('snapShot', snapShot);
 
-  /* 
-    the exist is a prop from snapShot object and it 
+  /*
+    the exist is a prop from snapShot object and it
     tells whether data is there or not aka if user is in db
   */
   if (!snapShot.exists) {
@@ -49,8 +52,6 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
-firebase.initializeApp(config);
-
 // util to programatically add object to DB
 export const addCollectionAndDocuments = async (
   collectionKey,
@@ -63,17 +64,16 @@ export const addCollectionAndDocuments = async (
     const newDocRef = collectionRef.doc();
     batch.set(newDocRef, obj);
   });
-
-  return await batch.commit();
+  await batch.commit();
 };
 
 export const convertCollectionsSnapshotToMap = (collections) => {
-  const tranformedCollection = collections.docs.map((doc) => {
-    const { title, items } = doc.data();
+  const tranformedCollection = collections.docs.map((docSnapshot) => {
+    const { title, items } = docSnapshot.data();
 
     return {
       routeName: encodeURI(title.toLowerCase()),
-      id: doc.id,
+      id: docSnapshot.id,
       title,
       items,
     };
@@ -86,7 +86,6 @@ export const convertCollectionsSnapshotToMap = (collections) => {
 };
 
 export const auth = firebase.auth();
-export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });

@@ -3,23 +3,20 @@ import { Route } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
-import {
-  fetchCollectionsStartAsync,
-} from '../../redux/shop/shop.actions';
-import {
-  selectIsCollectionFetching,
-} from '../../redux/shop/shop.selectors';
+import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions';
+import { selectIsCollectionFetching } from '../../redux/shop/shop.selectors';
 
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 
-import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
+import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container';
 import CollectionPage from '../collection/collection.component';
 
-const CollectionOverviewWithSpinner = WithSpinner(CollectionsOverview);
 const CollectionPageWithSpinner = WithSpinner(CollectionPage);
+const CollectionOverviewWithSpinner = WithSpinner(CollectionsOverviewContainer);
 
 class ShopPage extends React.Component {
   componentDidMount() {
+    // eslint-disable-next-line no-shadow
     const { fetchCollectionsStartAsync } = this.props;
     fetchCollectionsStartAsync();
   }
@@ -29,6 +26,7 @@ class ShopPage extends React.Component {
 
     return (
       <div className='shop-page'>
+        {/* First route is for SHOP NAV section */}
         <Route
           exact
           path={`${match.path}`}
@@ -39,6 +37,7 @@ class ShopPage extends React.Component {
             />
           )}
         />
+        {/* Second route is for individual sections like MENS, WOMENS ... */}
         <Route
           path={`${match.path}/:collectionId`}
           render={(props) => (
